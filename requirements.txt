@@ -1,4 +1,4 @@
 flask
-pycaret
+pycaret==3.2.0
 pandas
 gunicorn
