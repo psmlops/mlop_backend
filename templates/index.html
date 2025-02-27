@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Price Prediction</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 600px;
+            margin-top: 50px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .result-box {
+            background: #e9ecef;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 class="text-center">Car Price Prediction of cities in India</h2>
+        <form id="predictionForm">
+            <div class="mb-3">
+                <label for="Location" class="form-label">Location</label>
+                <select class="form-select" id="Location" required>
+                    <option value="">Select Location</option>
+                    <option>Mumbai</option>
+                    <option>Hyderabad</option>
+                    <option>Kochi</option>
+                    <option>Coimbatore</option>
+                    <option>Pune</option>
+					<option>Delhi</option>
+					<option>Chennai</option>
+					<option>Jaipur</option>
+					<option>Ahmedabad</option>
+					
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="Year" class="form-label">Year</label>
+				<small class="text-muted"> (Enter a year between 1998 and 2019:)</small>
+                <input type="number" class="form-control" id="Year" min="2000" max="2025" required>
+            </div>
+            <div class="mb-3">
+			<label for="Kilometers_Driven" class="form-label">Kilometers Driven</label>
+			<small class="text-muted">The total kilometres driven in the car by the previous owner(s) in KM.</small>
+			<input type="range" class="form-control" id="Kilometers_Driven" min="0" max="1000000" step="1000" value="50000" required>
+			<output for="Kilometers_Driven" id="output_Kilometers_Driven">50,000</output>
+			</div>
+			<script>
+			const slider = document.getElementById("Kilometers_Driven");
+			const output = document.getElementById("output_Kilometers_Driven");
+
+			slider.addEventListener("input", function() {
+				output.textContent = slider.value.toLocaleString();
+			});
+			</script>
+            <div class="mb-3">
+                <label for="Fuel_Type" class="form-label">Fuel Type</label>
+				<small class="text-muted"> (Fuel type of Vehicle)</small>
+                <select class="form-select" id="Fuel_Type" required>
+                    <option value="">Select Fuel Type</option>
+                    <option>Petrol</option>
+                    <option>Diesel</option>
+					<option>CNG</option>
+					<option>LPG</option>
+					<option>Electric</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="Transmission" class="form-label">Transmission</label>
+				<small class="text-muted"> (Transmission type of Vehicle)</small>
+                <select class="form-select" id="Transmission" required>
+                    <option value="">Select Transmission</option>
+                    <option>Automatic</option>
+                    <option>Manual</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="Owner_Type" class="form-label">Owner Type</label>
+				<small class="text-muted"> (How many owners did the vehicle have?)</small>
+                <select class="form-select" id="Owner_Type" required>
+                    <option value="">Select Owner Type</option>
+                    <option>First</option>
+                    <option>Second</option>
+                    <option>Third</option>
+					<option>Fourth & Above</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="Mileage" class="form-label">Mileage</label>
+				<small class="text-muted"> (Enter kmpl value for Petrol/Diesel vehicles. Enter km/kg values for other vehicle types.)</small>
+                <input type="number" class="form-control" id="Mileage" step="0.1" required>
+            </div>
+            <div class="mb-3">
+                <label for="Engine" class="form-label">Engine (CC)</label>
+                <input type="number" class="form-control" id="Engine" required>
+            </div>
+            <div class="mb-3">
+                <label for="Power" class="form-label">Power (bhp)</label>
+                <input type="number" class="form-control" id="Power" step="0.1" required>
+            </div>
+            <div class="mb-3">
+                <label for="Seats" class="form-label">Seats</label>
+                <input type="number" class="form-control" id="Seats" min="2" max="7" required>
+            </div>
+            <button type="button" class="btn btn-primary w-100" onclick="predictPrice()">Predict Price</button>
+        </form>
+        <div id="result" class="result-box mt-3" style="display: none;"></div>
+    </div>
+
+    <script>
+        function predictPrice() {
+            let formData = {
+                Location: document.getElementById('Location').value,
+                Year: parseInt(document.getElementById('Year').value),
+                Kilometers_Driven: parseInt(document.getElementById('Kilometers_Driven').value),
+                Fuel_Type: document.getElementById('Fuel_Type').value,
+                Transmission: document.getElementById('Transmission').value,
+                Owner_Type: document.getElementById('Owner_Type').value,
+                Mileage: parseFloat(document.getElementById('Mileage').value),
+                Engine: parseInt(document.getElementById('Engine').value),
+                Power: parseFloat(document.getElementById('Power').value),
+                Seats: parseInt(document.getElementById('Seats').value)
+            };
+
+            fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('result').style.display = 'block';
+                document.getElementById('result').innerHTML = `Predicted Price: ₹${data.prediction.toLocaleString()}`;
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>

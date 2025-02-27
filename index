@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-time Prediction</title>
+</head>
+<body>
+    <h1>Enter Data for Prediction</h1>
+    <form id="predictionForm">
+        <!-- Replace these input fields with the features your model expects -->
+        <input type="text" id="feature1" placeholder="Feature 1" required><br><br>
+        <input type="text" id="feature2" placeholder="Feature 2" required><br><br>
+        <input type="submit" value="Predict">
+    </form>
+
+    <h2>Prediction Result: <span id="result"></span></h2>
+
+    <script>
+        document.getElementById('predictionForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const data = {
+                feature1: document.getElementById('feature1').value,
+                feature2: document.getElementById('feature2').value
+            };
+
+            fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('result').innerText = data.prediction;
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>

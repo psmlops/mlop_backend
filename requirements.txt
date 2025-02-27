@@ -1,0 +1,4 @@
+flask
+pycaret
+pandas
+gunicorn
