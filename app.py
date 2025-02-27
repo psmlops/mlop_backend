@@ -6,7 +6,7 @@ from pycaret.classification import load_model, predict_model
 app = Flask(__name__)
 
 # Load the trained model
-model = load_model('final_model')
+model = load_model('final_model.pkl')
 
 @app.route('/')
 def home():
